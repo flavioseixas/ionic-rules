@@ -1,0 +1,147 @@
+{   "question": [
+        {
+            "q1": {
+                "text": "vai chover?",
+                "valid_values": [
+                    "s",
+                    "n"
+                ],
+                "answer": "null"
+            }
+        },
+        {
+            "q2": {
+                "text": "vai fazer frio?",
+                "valid_values": [
+                    "s",
+                    "n"
+                ],
+                "answer": "null"
+            }
+        }
+    ],
+    "decision": [
+        {
+            "d1": {
+                "text": "não sair de casa"
+            }
+        },
+        {
+            "d2": {
+                "text": "sair tranquilo"
+            }
+        },
+        {
+            "d3": {
+                "text": "levar um casaco"
+            }
+        }
+    ],
+    "rules": [
+        {
+            "conditions": {
+                "all": [
+                    {
+                        "fact": "q1",
+                        "operator": "equal",
+                        "value": "null"
+                    }
+                ]
+            },
+            "event": {
+                "type": "question",
+                "params": {
+                    "value": "q1"
+                }
+            },
+            "priority": 3
+        },
+        {
+            "conditions": {
+                "all": [
+                    {
+                        "fact": "q1",
+                        "operator": "equal",
+                        "value": "n"
+                    },
+                    {
+                        "fact": "q2",
+                        "operator": "equal",
+                        "value": "null"
+                    }
+                ]
+            },
+            "event": {
+                "type": "question",
+                "params": {
+                    "value": "q2"
+                }
+            },
+            "priority": 2
+        },
+        {
+            "conditions": {
+                "all": [
+                    {
+                        "fact": "q1",
+                        "operator": "equal",
+                        "value": "s"
+                    }
+                ]
+            },
+            "event": {
+                "type": "decision",
+                "params": {
+                    "value": "d1"
+                }
+            },
+            "priority": 1
+        },
+        {
+            "conditions": {
+                "all": [
+                    {
+                        "fact": "q1",
+                        "operator": "equal",
+                        "value": "n"
+                    },
+                    {
+                        "fact": "q2",
+                        "operator": "equal",
+                        "value": "n"
+                    }
+                ]
+            },
+            "event": {
+                "type": "decision",
+                "params": {
+                    "value": "d2"
+                }
+            },
+            "priority": 1
+        },
+        {
+            "conditions": {
+                "all": [
+                    {
+                        "fact": "q1",
+                        "operator": "equal",
+                        "value": "n"
+                    },
+                    {
+                        "fact": "q2",
+                        "operator": "equal",
+                        "value": "s"
+                    }
+                ]
+            },
+            "event": {
+                "type": "decision",
+                "params": {
+                    "value": "d3"
+                }
+            },
+            "priority": 1
+        }
+    ]
+}

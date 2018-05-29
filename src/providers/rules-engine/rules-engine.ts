@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { Observable } from 'rxjs/Observable';
+
 import { Engine } from 'json-rules-engine';
 
 @Injectable()
@@ -10,14 +12,18 @@ export class RulesEngineProvider {
   
   private data: any = new Object();
   private facts: any = new Object();
-  private response: any;
-
-  private currentQuestion: any;
-  private currentDecision: any;
   
+  private item: any;
+  private itemObserver: any;
+  //private response: any;
+
   constructor(private http: HttpClient) {
 
     this.engine = new Engine();
+
+    this.item = Observable.create(observer => {
+      this.itemObserver = observer;
+    });
 
     this.http.get('assets/rules/rules.json').subscribe(data => {
       this.data = data;
@@ -39,15 +45,17 @@ export class RulesEngineProvider {
       }      
  
       this.engine.on('success', async (event, almanac) => {
-        this.response = new Object();
+       
         for (var p in this.data[event.type]) {
           var propertyName = Object.getOwnPropertyNames(this.data[event.type][p])[0];
+          
           if (propertyName === event.params.value) {
-            this.response[event.type] = this.data[event.type][p];
-            
+            var response = new Object;
+            response[event.type] = this.data[event.type][p];
+            this.itemObserver.next(response);
           }
         }
-        console.log(this.response);
+        //console.log(this.response);
       });
   
       this.engine.run(this.facts).then((events) => {
@@ -62,8 +70,7 @@ export class RulesEngineProvider {
 
   }
 
-  public getEvent(): any {
-
-    return this.response;
+  public getEvent(): Observable<any> {
+    return this.item;
   }
 }

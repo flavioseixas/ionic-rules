@@ -9,15 +9,36 @@
 <ion-content padding>
 
   <ion-card>
-
     <ion-card-header>
-
+        {{ cardHeader }}:
     </ion-card-header>
-  
+
     <ion-card-content>
       <p> {{ cardContent }} </p>
     </ion-card-content>
-  
   </ion-card>
+
+  <ion-item>
+    <ion-list *ngIf="status === 'question'" no-lines radio-group>
+      <ion-item *ngFor="let answer of possibleAnswers; let i = index;">
+        <ion-label>{{i+1}}. {{answer.text}}</ion-label>
+        <ion-radio (click)="selectAnswer(i)" [checked]="answer.selected" [disabled]="answer.hasAnswered"></ion-radio>
+      </ion-item>
+    </ion-list>
+  </ion-item>
+
+  <ion-item padding>
+      <button default color="dark" ion-button item-left icon-left>
+        <ion-icon name="arrow-dropleft"></ion-icon>
+        Retornar
+      </button>
+      <button (click)="sendAnswer()" default color="secondary" *ngIf="status === 'question'" [disabled]="!btnSalvarEnable" ion-button item-right icon-right>
+        Salvar
+        <ion-icon name="arrow-dropright"></ion-icon>
+      </button>
+      <button (click)="sendAnswer()" default color="primary" *ngIf="status === 'decision'" ion-button item-right icon-right>
+        Novamente
+      </button>
+  </ion-item>
 
 </ion-content>

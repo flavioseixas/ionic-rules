@@ -6,6 +6,10 @@
                     "s",
                     "n"
                 ],
+                "valid_values_text": [
+                    "Sim",
+                    "Não"
+                ],
                 "answer": "null"
             }
         },
@@ -15,6 +19,10 @@
                 "valid_values": [
                     "s",
                     "n"
+                ],
+                "valid_values_text": [
+                    "Sim",
+                    "Não"
                 ],
                 "answer": "null"
             }

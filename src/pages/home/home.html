@@ -20,7 +20,7 @@
 
   <ion-item>
     <ion-list *ngIf="status === 'question'" no-lines radio-group>
-      <ion-item *ngFor="let answer of possibleAnswers; let i = index;">
+      <ion-item *ngFor="let answer of uiPossibleAnswers; let i = index;">
         <ion-label>{{i+1}}. {{answer.text}}</ion-label>
         <ion-radio (click)="selectAnswer(i)" [checked]="answer.selected" [disabled]="answer.hasAnswered"></ion-radio>
       </ion-item>
@@ -28,7 +28,7 @@
   </ion-item>
 
   <ion-item padding>
-      <button default color="dark" ion-button item-left icon-left>
+      <button (click)="moveBack()" default color="dark" [disabled]="!btnRetornarEnable" ion-button item-left icon-left>
         <ion-icon name="arrow-dropleft"></ion-icon>
         Retornar
       </button>
@@ -36,7 +36,7 @@
         Salvar
         <ion-icon name="arrow-dropright"></ion-icon>
       </button>
-      <button (click)="sendAnswer()" default color="primary" *ngIf="status === 'decision'" ion-button item-right icon-right>
+      <button (click)="moveBack()" default color="primary" *ngIf="status === 'decision'" ion-button item-right icon-right>
         Novamente
       </button>
   </ion-item>

@@ -11,10 +11,13 @@ export class HomePage {
 
   cardContent: String;
   cardHeader: String;
-  status: any;
 
   id: any;
+  previousId: any;
   data: any;
+  answerInit: any;
+  answer: any;
+  status: any;
 
   questions: any;
   uiPossibleAnswers: any;
@@ -26,6 +29,17 @@ export class HomePage {
 
   }
 
+  ngOnInit() {
+
+    this.engine.getNewEvent().subscribe(data => {
+      this.buildPage(data);
+    });
+    this.answerInit = this.engine.getFactList();
+    this.answer = this.engine.getFactList();
+    this.status = "initial";
+    this.engine.setFact(null);
+  }
+  
   private updateCardContent(header, content) {
     this.cardHeader = header;
     this.cardContent = content;
@@ -33,79 +47,61 @@ export class HomePage {
 
   private buildPage(data) {
 
-    if (Object.getOwnPropertyNames(data)[0] === "question") {
+    this.status = Object.getOwnPropertyNames(data)[0];
+    this.id = Object.getOwnPropertyNames(data[this.status])[0];
+    this.data = data;
 
-      this.status = "question";
-
-      this.id = Object.getOwnPropertyNames(data["question"])[0];
-      this.data = data;
-      var text = data["question"][this.id]["text"];
-
-      this.uiPossibleAnswers = new Array();
+    this.uiPossibleAnswers = new Array();
+    this.updateCardContent(this.status, data[this.status][this.id]["text"]);
+    
+    if (this.status === "question") {
+      var answer = this.answer[this.id];
       var selected = null;
       for(var p in data["question"][this.id]["valid_values"]) {
-        if (data["question"][this.id]["valid_values"][p] === this.data["question"][this.id]["answer"]) {
+        if (data["question"][this.id]["valid_values"][p] === answer) {
           selected = true;
         }
         else {
           selected = false;
         }
-
         this.uiPossibleAnswers.push(Object.assign({},{"text":data["question"][this.id]["valid_values_text"][p]},{"selected":selected},{"hasAnswered":selected}));
       };
 
-      if (this.data["question"][this.id]["answer"] === "null") {
+      if (answer === "null") {
         this.btnSalvarEnable = false;
       }
-
-      this.updateCardContent("Pergunta", text);
-    }
-
-    if (Object.getOwnPropertyNames(data)[0] === "decision") {
-      this.status = "decision";
-      
-      this.id = Object.getOwnPropertyNames(data["decision"])[0];
-      var text = data["decision"][this.id]["text"];
-
-      this.uiPossibleAnswers = new Array();
-      this.updateCardContent("Decisão", text);
     }
   }
 
-  ngOnInit() {
-    this.questions = new Array();
-
-    this.engine.getNewEvent().subscribe(data => {
-      this.questions.push(data);
-      
-      if (this.questions.length > 1) {
-        console.log("passei aqui também");
-        this.btnRetornarEnable = true;
-      }
-      
-      this.buildPage(data);
-    });
+  public startNow() {
+    this.engine.runEngine();
   }
 
   public selectAnswer(index) {
-    this.questions[this.questions.length-1]["question"][this.id]["answer"] = this.data["question"][this.id]["valid_values"][index];
+    this.answer[this.id] = this.data["question"][this.id]["valid_values"][index];
     this.btnSalvarEnable = true;
   }
 
   public sendAnswer() {
-    this.engine.setFact(this.id, this.questions[this.questions.length-1]["question"][this.id]["answer"]);
+    this.previousId = this.id;
+    this.engine.setFact(this.answer);
+    this.btnRetornarEnable = true;
   }
 
-  public moveBack() {
-    this.questions.pop();
-    this.id = Object.getOwnPropertyNames(this.questions[this.questions.length-1]["question"])[0];
-    console.log(this.id);
-    if (this.questions.length <= 1) {
-      console.log("passei aqui");
+  public undo() {
+    this.answer[this.id] = "null";
+    var facts = this.answer;
+    facts[this.previousId] = "null";
+    this.engine.setFact(facts);
+
+    if (this.answer === this.answerInit) {
       this.btnRetornarEnable = false;
     }
-    
-    this.engine.setFact(this.id, "null");
+  }
 
+  public runAgain() {
+    this.answer = this.answerInit;
+    console.log(this.answer);
+    this.engine.runEngine();
   }
 }

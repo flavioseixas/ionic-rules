@@ -15,7 +15,6 @@ export class RulesEngineProvider {
 
   private item: any;
   private itemObserver: any;
-  //private response: any;
 
   constructor(private http: HttpClient) {
 
@@ -36,32 +35,29 @@ export class RulesEngineProvider {
       for (i = 0; i < data["question"].length; i++) {
 
         var factName = Object.getOwnPropertyNames(data["question"][i])[0];
-        var factValue = data["question"][i][factName]["answer"];
 
         var myFact = new Object();
-        myFact[factName] = factValue;
-
+        myFact[factName] = "null";
         Object.assign(this.facts, myFact);
       }
 
       this.engine.on('success', async (event, almanac) => {
-
         for (var p in this.data[event.type]) {
           var propertyName = Object.getOwnPropertyNames(this.data[event.type][p])[0];
 
           if (propertyName === event.params.value) {
             var response = new Object;
             response[event.type] = this.data[event.type][p];
+
             this.itemObserver.next(response);
           }
         }
       });
-
-      this.runEngine();
     });
   }
 
-  private runEngine() {
+  public runEngine() {
+    console.log(this.facts);
     this.engine.run(this.facts).then((events) => {
       events.map((event) => {
         console.log('terminei aqui');
@@ -69,10 +65,18 @@ export class RulesEngineProvider {
     });
   }
 
-  public setFact(property, value) {
-    this.facts[property] = value;
-    this.runEngine();
+  public setFact(fact: any) {
+    Object.assign(this.facts, fact);
     console.log(this.facts);
+    this.runEngine();
+  }
+
+  public getFact(property): any {
+    return this.facts[property];
+  }
+
+  public getFactList(): any {
+    return this.facts;
   }
 
   public getNewEvent(): Observable<any> {

@@ -57,17 +57,17 @@ export class RulesEngineProvider {
   }
 
   public runEngine() {
-    console.log(this.facts);
+    //console.log(this.facts);
     this.engine.run(this.facts).then((events) => {
       events.map((event) => {
-        console.log('terminei aqui');
+        //console.log('terminei aqui');
       });
     });
   }
 
   public setFact(fact: any) {
     Object.assign(this.facts, fact);
-    console.log(this.facts);
+    //console.log(this.facts);
     this.runEngine();
   }
 

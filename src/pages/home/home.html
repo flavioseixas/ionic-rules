@@ -22,7 +22,7 @@
     <ion-list *ngIf="status === 'question'" no-lines radio-group>
       <ion-item *ngFor="let answer of uiPossibleAnswers; let i = index;">
         <ion-label>{{i+1}}. {{answer.text}}</ion-label>
-        <ion-radio (click)="selectAnswer(i)" [checked]="answer.selected" [disabled]="answer.hasAnswered"></ion-radio>
+        <ion-radio (click)="selectAnswer(i)" [checked]="answer.selected"></ion-radio>
       </ion-item>
     </ion-list>
   </ion-item>
